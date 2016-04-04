@@ -1,5 +1,7 @@
 #include <irrlicht.h>
 #include <iostream>
+#include "WorldObject.h"
+#include "Graphics.h"
 
 using namespace irr;
 
@@ -14,17 +16,24 @@ using namespace gui;
 #pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
 #endif
 
-int main()
+IrrlichtDevice* loadGRender()
 {
+	
+	//
 	IrrlichtDevice *device =
-		createDevice(video::EDT_SOFTWARE, dimension2d<u32>(640, 480), 16,
-			false, false, false, 0);
+		createDevice(video::EDT_DIRECT3D9, dimension2d<u32>(800, 600), 16,
+		false, false, false, 0);
 
 	if (!device)
-		return 1;
+		return nullptr;
+	return device;
+}
 
+int main()
+{
+	IrrlichtDevice* device = loadGRender();
+	
 	device->setWindowCaption(L"Hello World! - Irrlicht Engine Demo");
-
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
 	IGUIEnvironment* guienv = device->getGUIEnvironment();
@@ -47,6 +56,10 @@ int main()
 		node->setMaterialTexture(0, driver->getTexture("sydney.bmp"));
 	}
 	smgr->addCameraSceneNode(0, vector3df(0, 30, -40), vector3df(0, 5, 0));
+
+	//
+	driver->getMaterial2D().TextureLayer[0].BilinearFilter = true;
+	driver->getMaterial2D().AntiAliasing = video::EAAM_FULL_BASIC;
 
 	while (device->run())
 	{
